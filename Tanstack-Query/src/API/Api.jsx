@@ -12,8 +12,12 @@ const api =axios.create({
 
 // this is a function that fetches posts from the baseURL wich we created above
 // it returns a promise that resolves to the data of the response 
-export const fetchPosts=()=>{
+export const fetchPosts=async()=>{
 
-    return api.get('/posts')
+ const res=await api.get('/posts')
+ return res.status===200 ? res : new Error("Error fetching data")
        
 }
+
+
+ 

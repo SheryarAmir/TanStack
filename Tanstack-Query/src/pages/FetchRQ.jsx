@@ -1,28 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { fetchPosts } from "../API/Api";
+
+
+
+
 const FetchRQ = () => {
-
-
-
-  const getPostData = async () => {
-    
-    try {
-      const res = await fetchPosts();
-      if (res.status === 200) {
-        return res.data;
-      } else {
-        console.log("Error");
-        return [];
-      }
-    } catch (err) {
-      console.log(err); 
-      return [];
-    }
-  };
-
   const { data } = useQuery({
     queryKey: ["posts"],
-    queryFn:getPostData,
+    queryFn: fetchPosts,
   });
 
   return (
