@@ -3,10 +3,7 @@ import React from 'react'
 const page = () => {
   return (
     <div>
-
-<form action="">
-  
-</form>
+Lorem ipsum dolor sit, amet consectetur adipisicing elit. Inventore deserunt nobis delectus enim sunt? Officia exercitationem, similique illum quaerat mollitia delectus cum, officiis et repellendus consectetur fugiat quos tempora placeat. 
     </div>
   )
 }

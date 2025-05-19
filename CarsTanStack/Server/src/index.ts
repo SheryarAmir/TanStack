@@ -6,6 +6,7 @@ const PORT = process.env.PORT || 9000;
 const httpServer: http.Server = http.createServer(server);
 
 async function startServer(): Promise<void> {
+
   httpServer.listen(PORT, () => {
     console.log("listening to server on ", PORT);
   });

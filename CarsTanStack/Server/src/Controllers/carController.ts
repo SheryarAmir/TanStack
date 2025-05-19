@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import cars from "../Modal/carModal";
 import { CarData } from "../Types/types";
+
+
+
  export async function AllCars(req: Request, res: Response): Promise<void> {
   try {
     const car = await cars.find();

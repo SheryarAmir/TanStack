@@ -26,5 +26,4 @@ const CarSchema=new mongoose.Schema({
 
 
 const CarModel=mongoose.model("Cars",CarSchema);
-
 export default CarModel;
