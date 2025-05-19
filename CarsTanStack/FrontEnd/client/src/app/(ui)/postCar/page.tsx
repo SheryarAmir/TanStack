@@ -1,7 +1,6 @@
 "use client";
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { postCar } from '../API/CarRoutes';
 import { useState } from 'react';
+
 import {
   Card,
   CardContent,
@@ -15,41 +14,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { CarIcon, Calendar, DollarSign, Palette, Tag } from "lucide-react";
-
-
+import { usePostCar } from '@/hooks/useCars';
 
 export default function PostCar() {
-  const queryClient = useQueryClient();
-
   const [name, setName] = useState("");
   const [model, setModel] = useState("");
   const [year, setYear] = useState<number>(0);
   const [price, setPrice] = useState<number>(0);
   const [color, setColor] = useState("");
 
-  const mutation = useMutation({
-    mutationFn: postCar,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cars'] });
-      setName("");
-      setModel("");
-      setYear(0);
-      setPrice(0);
-      setColor("");
-      alert("Car added successfully!");
-    },
-    onError: () => {
-      alert("Failed to add car");
-    },
-  });
+
+  const mutation = usePostCar();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    mutation.mutate({ name, model, year, price, color });
+    mutation.mutate({ name, model, year, price, color }, {
+      onSuccess: () => {
+        setName("");
+        setModel("");
+        setYear(0);
+        setPrice(0);
+        setColor("");
+      }
+    });
   };
 
   return (
-   <Card className="max-w-md mx-auto mt-10 border border-gray-200 shadow-lg">
+    <Card className="max-w-md mx-auto mt-10 border border-gray-200 shadow-lg">
       <CardHeader className="space-y-1">
         <CardTitle className="text-2xl font-bold text-center text-primary">Add New Car</CardTitle>
         <CardDescription className="text-center">Enter the details of the car you want to add</CardDescription>
@@ -135,6 +126,5 @@ export default function PostCar() {
         </Button>
       </CardFooter>
     </Card>
-
   );
 }

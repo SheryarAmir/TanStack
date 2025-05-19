@@ -1,16 +1,12 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
-import { fetchCars } from "../API/CarRoutes"
 import { Loader2, AlertCircle, Car } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useCars } from "@/hooks/useCars"
 
 export default function FetchCars() {
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["cars"],
-    queryFn: fetchCars,
-  })
+  const { data, isLoading, isError } = useCars()
 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-gradient-to-b from-slate-50 to-slate-100 min-h-screen">
