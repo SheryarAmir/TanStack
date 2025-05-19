@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query"
-import { fetchCars, postCar } from "@/services/carService"
+import { fetchCars, postCar,deleteCar,fetchCarById } from "@/services/carService"
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 //get all the cars
@@ -30,4 +30,34 @@ export function usePostCar() {
 }
 
 
+export function useDeleteCar() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    
+    mutationFn: (id: string | number) => deleteCar(String(id)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cars'] })
+      alert("Car deleted successfully!")
+    },
+    onError: () => {
+      alert("Failed to delete car")
+    },
+  })                                                                                                                                                                                                          
+}
+
+export function useFetchCarById() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: string | number) => fetchCarById(String(id)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cars'] })
+      alert("Car fetched successfully!")
+    },
+    onError: () => {
+      alert("Failed to fetch car by ID")
+    },
+  })
+}
 
