@@ -12,13 +12,13 @@ import { Label } from "@/components/ui/label"
 export default function SignInPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  
+
 
   const { mutate: login, isPending } = useLogin()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    login({ email, password } as any) // or define a type for login input
+    login({ email, password } as any) 
   }
 
   return (

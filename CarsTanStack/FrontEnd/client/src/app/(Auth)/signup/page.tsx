@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 export default function SignUpPage() {
   const { mutate: register, isPending } = useRegister();
@@ -26,18 +27,30 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSubmit = () => {
-    if (password !== confirmPassword) {
-      alert("Passwords do not match.");
-      return;
-    }
+ const handleSubmit = async () => {
+  if (password !== confirmPassword) {
+    alert("Passwords do not match.");
+    return;
+  }
 
-    register({
-      fullName,
-      email,
-      password,
-    });
-  };
+  try {
+    await register(
+      { fullName, email, password },
+      {
+        onSuccess: () => {
+          router.push("/signin");
+        },
+        onError: (error: any) => {
+          alert(error?.message || "Registration failed.");
+        },
+      }
+    );
+  } catch (error) {
+    console.error("Registration error:", error);
+  }
+};
+
+  const router=useRouter()
 
   return (
     <div className="flex min-h-screen flex-col container mx-auto">
@@ -124,6 +137,7 @@ export default function SignUpPage() {
                 <div className="text-center text-sm">
                   Already have an account?{" "}
                   <Link
+
                     href="/signin"
                     className="text-primary underline underline-offset-4 hover:text-primary/90"
                   >

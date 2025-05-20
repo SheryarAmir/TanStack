@@ -1,6 +1,7 @@
 // import { useQuery } from "@tanstack/react-query"
 import {registerUser,loginUser} from "@/services/AuthServices"
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useRouter } from "next/navigation";
 // import { AuthTypes } from "@/types/AuthTypes";
 
 
@@ -21,15 +22,17 @@ export const useRegister = () => {
 };
 
 
-// Login Hook
 export const useLogin = () => {
+  const router = useRouter(); 
+
   return useMutation({
     mutationFn: loginUser,
     onSuccess: (data) => {
-      console.log("User logged in:", data);
+      router.push("/postCar");
     },
     onError: (error: any) => {
-      console.error(`Login error: ${error}`);
+     
+      alert(`Login error in AuthHooks: ${error.message}`);
     },
   });
 };

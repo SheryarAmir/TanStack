@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { CarIcon, Calendar, DollarSign, Palette, Tag } from "lucide-react";
 import { usePostCar } from '@/hooks/useCars';
+import { useRouter } from 'next/navigation';
 
 export default function PostCar() {
   const [name, setName] = useState("");
@@ -23,10 +24,12 @@ export default function PostCar() {
   const [price, setPrice] = useState<number>(0);
   const [color, setColor] = useState("");
 
-
+const router=useRouter()
   const mutation = usePostCar();
 
   const handleSubmit = (e: React.FormEvent) => {
+
+
     e.preventDefault();
     mutation.mutate({ name, model, year, price, color }, {
       onSuccess: () => {
@@ -35,6 +38,11 @@ export default function PostCar() {
         setYear(0);
         setPrice(0);
         setColor("");
+              
+        setTimeout(() => {
+        router.push("/getCars");
+      }, 100)
+
       }
     });
   };

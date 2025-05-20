@@ -65,21 +65,16 @@ export async function SignIn(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    if (!user.password) {
-      res.status(500).json({ message: "Password is missing for this user" });
-      return;
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-
-    if (!isMatch) {
+    // Plain text password match
+    if (user.password !== password) {
       res.status(401).json({ message: "Incorrect password" });
       return;
     }
 
-    res.status(200).json({ message: "Login successful", user });
+    res.status(200).json({ message: "Login successful", ExistUser:user});
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Something went wrong" });
   }
 }
+
