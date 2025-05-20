@@ -4,9 +4,26 @@ import { Loader2, AlertCircle, Car } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useCars } from "@/hooks/useCars"
+import { useRouter } from "next/navigation"
+
+type CarType = {
+  id: string;
+  _id: string; // or number, depending on your backend, but string is common for MongoDB
+  name: string;
+  model: string;
+  year: number;
+  price: number;
+  color: string;
+};
 
 export default function FetchCars() {
-  const { data, isLoading, isError } = useCars()
+  const { data, isLoading, isError } = useCars() as {
+    data: CarType[] | undefined;
+    isLoading: boolean;
+    isError: boolean;
+  };
+
+  const router = useRouter()
 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-gradient-to-b from-slate-50 to-slate-100 min-h-screen">
@@ -75,12 +92,24 @@ export default function FetchCars() {
                       style={{ backgroundColor: car.color }}
                     />
                     <span className="text-sm">{car.color}</span>
+                    
                   </div>
                 </div>
 
-                <button className="w-full mt-4 py-2 rounded-md bg-slate-100 text-slate-700 font-medium transition-colors hover:bg-slate-200">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <span className="text-sm font-medium text-slate-500">Car ID</span>
+                  <span className="font-semibold text-emerald-600">{car._id}</span>
+                </div>
+
+                <button onClick={() => router.push(`/getById/${car._id}`)} className="w-full mt-4 py-2 rounded-md bg-slate-100 text-slate-700 font-medium transition-colors hover:bg-slate-200">
                   View Details
-                </button>
+                </button> 
+               <button
+  onClick={() => router.push(`/DeleteCar`)}
+  className="w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition disabled:opacity-50"
+>
+  Delete Car
+</button>
               </CardContent>
             </Card>
           ))}

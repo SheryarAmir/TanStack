@@ -6,7 +6,7 @@ export const fetchCars = async (): Promise<Car[]> => {
   return res.data.allcars;
 };
 
-export const postCar = async (newCar: Omit<Car, "id">) => {
+export const postCar = async (newCar:Car) => {
   const res = await api.post("/newcar", newCar);
 
   return res.data.newAddCar;
@@ -31,3 +31,4 @@ export const fetchCarById=async (id:string)=>{
 //   const res=await api.put(`/car/${id}`,updatedCar);
 //   return res.data.car;
 // }
+
