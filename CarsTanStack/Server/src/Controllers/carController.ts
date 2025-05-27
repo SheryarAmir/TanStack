@@ -24,6 +24,8 @@ import { CarData } from "../Types/types";
       year: data.year,
       price: data.price,
       color: data.color,
+      // createdBy: data.user._id,
+    
     });
 
     res.status(200).json({ message: "Car added successfully", newAddCar: car });

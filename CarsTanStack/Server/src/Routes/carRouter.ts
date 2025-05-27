@@ -1,7 +1,7 @@
 import express from "express";
 import {AllCars, AddNewCar,Deletecar,UpdateCar,GetCarById} from "../Controllers/carController";
-
 const router = express.Router();
+import { authMiddleware } from "../Middlewares/AuthMiddlerware";
 
 router.get("/cars", AllCars);
 router.post("/newcar", AddNewCar);
