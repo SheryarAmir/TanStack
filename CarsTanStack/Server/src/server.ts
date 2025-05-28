@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 connectToDatabase("mongodb://localhost:27017/Carmydatabase");
 
-app.use("/",  carRouter);
+app.use("/",carRouter);
 app.use("/" , AuthRouter);
 
 applyBodyParsers(app);

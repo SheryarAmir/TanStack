@@ -14,8 +14,8 @@ export const authMiddleware = (
   next: NextFunction
 ) => {
   const token = req.cookies?.accessToken;
-  console.log(`Token: ${token}`);
-
+  // console.log(`Token: ${token}`);
+console.log()
 
   if (!token) {
      res.status(401).json({ message: 'Access token missing' });
