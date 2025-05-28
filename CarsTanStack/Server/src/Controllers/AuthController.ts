@@ -58,6 +58,8 @@ export async function SignIn(req: Request, res: Response): Promise<void> {
     // check if password is correct
     if (user.password !== password) {
       res.status(401).json({ message: "Incorrect password" });
+
+      
       return;
     }
     // Generate JWT token
