@@ -1,7 +1,7 @@
 import * as http from "http";
 import server from "./server";
 
-const PORT = process.env.PORT || 9001;
+const PORT = process.env.PORT || 9000;
 
 const httpServer: http.Server = http.createServer(server);
 
