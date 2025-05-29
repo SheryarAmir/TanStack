@@ -3,6 +3,7 @@ import { Car } from "@/types/car";
 
 export const fetchCars = async (): Promise<Car[]> => {
   const res = await api.get("/cars");
+console.log(res.data)
   return res.data.allcars;
 };
 

@@ -7,12 +7,14 @@ import dotenv from "dotenv";
 dotenv.config();
 
 enum HttpStatus {
+
   OK = 200,
   CREATED = 201,
   BAD_REQUEST = 400,
   NOT_FOUND = 404,
   INTERNAL_SERVER_ERROR = 500,
   CONFLICT = 409,
+
 }
 
 export async function SignUp(req: Request, res: Response): Promise<void> {
@@ -25,7 +27,7 @@ export async function SignUp(req: Request, res: Response): Promise<void> {
   }
 
   try {
-    const newUser = await Auth.create({
+    const newUser = await Auth.create({ 
       email: user.email,
       fullname: user.fullname,
       password: user.password,
@@ -64,6 +66,7 @@ export async function SignIn(req: Request, res: Response): Promise<void> {
     }
     // Generate JWT token
     const secret = process.env.JWT_SECRET;
+    console.log({secret})
     if (!secret) {
       res
         .status(500)
@@ -71,7 +74,7 @@ export async function SignIn(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const accessToken = JWT.sign({ email: user.email }, secret, {
+    const accessToken = JWT.sign({ email: user.email, id:user._id }, secret, {
       expiresIn: "1h",
     });
 

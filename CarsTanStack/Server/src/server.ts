@@ -7,6 +7,18 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 
+declare module "express-serve-static-core"{
+  interface Request{
+    user: {
+      email : string;
+      id: string;
+    }
+  }
+}
+
+
+
+
 const app: Express = express();
 
 //  Correct CORS configuration for cookies

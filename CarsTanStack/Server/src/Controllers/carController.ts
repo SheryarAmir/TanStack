@@ -16,6 +16,8 @@ import { CarData } from "../Types/types";
 
  export async function AddNewCar(req: Request, res: Response): Promise<void> {
   const data = req.body;
+  console.log({data})
+
 
   try {
     const car:CarData = await cars.create({
@@ -24,8 +26,7 @@ import { CarData } from "../Types/types";
       year: data.year,
       price: data.price,
       color: data.color,
-      // createdBy: data.user._id,
-    
+      // createdBy: req.user.id, 
     });
 
     res.status(200).json({ message: "Car added successfully", newAddCar: car });

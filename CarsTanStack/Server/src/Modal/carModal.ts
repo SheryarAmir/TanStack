@@ -21,7 +21,11 @@ const CarSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-
+//  createdBy: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: "Auth", // or "User"
+//     required: true
+//   }
     
 
 
