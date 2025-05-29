@@ -1,5 +1,4 @@
-    
-  
+
 
 export interface CarData {
   name: string;

@@ -35,13 +35,16 @@ export default function SignUpPage() {
 
   try {
     await register(
-      { fullName, email, password },
+      { fullName, email, password ,confirmPassword },
       {
         onSuccess: () => {
+          alert("sign up susscess full")
           router.push("/signin");
         },
         onError: (error: any) => {
-          alert(error?.message || "Registration failed.");
+
+          alert("user allready exist please can you email and password");
+
         },
       }
     );

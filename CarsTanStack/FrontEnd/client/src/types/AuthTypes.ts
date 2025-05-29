@@ -1,8 +1,8 @@
 export type AuthTypes = {
   id: string;
-  fullname: string;
+  fullName: string;
   email: string;
   password: string;
-  confirmpassword: string;
+  confirmPassword: string;
   
 };

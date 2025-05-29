@@ -3,47 +3,60 @@ import Auth from "../Modal/AuthModal";
 import JWT from "jsonwebtoken";
 import { env } from "process";
 
+
+
+import { signUpSchema } from "../schemas/auth.schema";
+import * as authService from "../services/auth.service";
+import { HttpStatus } from "../utils/httpStatus"; 
+
 import dotenv from "dotenv";
 dotenv.config();
 
-enum HttpStatus {
 
-  OK = 200,
-  CREATED = 201,
-  BAD_REQUEST = 400,
-  NOT_FOUND = 404,
-  INTERNAL_SERVER_ERROR = 500,
-  CONFLICT = 409,
 
-}
-
-export async function SignUp(req: Request, res: Response): Promise<void> {
-  const user = req.body;
-
-  if (user.email && user.password) {
-    console.log("you data is valid");
-  } else {
-    console.log(`please enter email and password to start`);
-  }
-
+// Optional: Enum for status codes
+export const SignUp = async (req: Request, res: Response): Promise<void> => {
   try {
-    const newUser = await Auth.create({ 
-      email: user.email,
-      fullname: user.fullname,
-      password: user.password,
-      confirmPassword: user.confirmPassword,
+    // console.log(req.body);
+    
+    const userData = signUpSchema.parse(req.body); // Zod will throw here if validation fails
+    // console.log(userData);
+
+    const newUser = await authService.signUpService(userData);
+
+    res.status(HttpStatus.CREATED).json({
+      message: "User successfully signed up",
+      newUser: newUser,
     });
 
-    res
-      .status(HttpStatus.CREATED)
-      .json({ message: "user is successfully singup", newUser: newUser });
-  } catch (error) {
-    console.log(`their is an error in signup  ${error}`);
-    res
-      .status(HttpStatus.CONFLICT)
-      .json(`their is an error in signup ${error}`);
+  } catch (error: any) {
+    // 🧪 Zod validation error
+    if (error.name === "ZodError") {
+      console.error("Zod validation failed:", error.errors);
+      res.status(HttpStatus.BAD_REQUEST).json({
+        message: "Validation error",
+        issues: error.errors,
+      });
+
+    // ❌ MongoDB Duplicate Email Error
+    } else if (error.code === 11000 && error.keyPattern?.email) {
+      console.error("Duplicate email error:", error.message);
+      res.status(HttpStatus.CONFLICT).json({
+        message: "Email already exists",
+      });
+
+    // 🛠 Other Errors
+    } else {
+      console.error("Signup error:", error);
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: "Signup failed",
+        error: error.message || error,
+      });
+    }
   }
-}
+};
+
+
 
 // this function handles user sign-in
 

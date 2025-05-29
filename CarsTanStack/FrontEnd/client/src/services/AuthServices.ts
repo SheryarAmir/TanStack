@@ -4,7 +4,7 @@ import { AuthTypes} from "@/types/AuthTypes";
 
 export const registerUser = async (user: AuthTypes) => {
   const res = await api.post("/signup", user);
-    console.log(res.data.newUser);
+    // console.log(res.data.newUser);
   return res.data.newUser;
 };
 

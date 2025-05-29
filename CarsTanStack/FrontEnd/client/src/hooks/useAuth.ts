@@ -12,11 +12,17 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: registerUser,
     onSuccess: (data) => {
-      console.log("User registered:", data);
+      console.log(" User registered:", data);
+
+    
     },
     onError: (error: any) => {
-    
-        console.log(`signup error: ${error}`)
+      if (error.response?.data?.issues) {
+        
+        console.log("Zod validation errors:", error.response.data.issues);
+      } else {
+        console.log(" Signup failed:", error.message);
+      }
     },
   });
 };

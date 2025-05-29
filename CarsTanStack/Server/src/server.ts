@@ -16,9 +16,6 @@ declare module "express-serve-static-core"{
   }
 }
 
-
-
-
 const app: Express = express();
 
 //  Correct CORS configuration for cookies
