@@ -5,7 +5,7 @@ import { env } from "process";
 
 
 
-import { signUpSchema } from "../schemas/auth.schema";
+import { signUpSchema, } from "../schemas/auth.schema";
 import * as authService from "../services/auth.service";
 import { HttpStatus } from "../utils/httpStatus"; 
 
@@ -60,11 +60,16 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
 
 // this function handles user sign-in
 
+
+
 export async function SignIn(req: Request, res: Response): Promise<void> {
   const { email, password } = req.body;
 
   try {
-    const user = await Auth.findOne({ email });
+
+    // const loginUser=SignInSchema.parse(req.body)
+    const user = await Auth.findOne(email ,password );
+
     // check if user exists
     if (!user) {
       res.status(404).json({ message: "User not found" });

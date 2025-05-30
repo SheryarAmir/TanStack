@@ -5,3 +5,4 @@ export const signUpService = async (userData: UserSignupInput) => {
   const newUser = await Auth.create(userData);
   return newUser;
 };
+
