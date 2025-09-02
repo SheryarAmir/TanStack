@@ -3,22 +3,18 @@ import Auth from "../Modal/AuthModal";
 import JWT from "jsonwebtoken";
 import { env } from "process";
 
-
-
-import { signUpSchema, } from "../schemas/auth.schema";
+import { signUpSchema } from "../schemas/auth.schema";
 import * as authService from "../services/auth.service";
-import { HttpStatus } from "../utils/httpStatus"; 
+import { HttpStatus } from "../utils/httpStatus";
 
 import dotenv from "dotenv";
 dotenv.config();
-
-
 
 // Optional: Enum for status codes
 export const SignUp = async (req: Request, res: Response): Promise<void> => {
   try {
     // console.log(req.body);
-    
+
     const userData = signUpSchema.parse(req.body); // Zod will throw here if validation fails
     // console.log(userData);
 
@@ -28,7 +24,6 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
       message: "User successfully signed up",
       newUser: newUser,
     });
-
   } catch (error: any) {
     // 🧪 Zod validation error
     if (error.name === "ZodError") {
@@ -38,14 +33,14 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
         issues: error.errors,
       });
 
-    // ❌ MongoDB Duplicate Email Error
+      // ❌ MongoDB Duplicate Email Error
     } else if (error.code === 11000 && error.keyPattern?.email) {
       console.error("Duplicate email error:", error.message);
       res.status(HttpStatus.CONFLICT).json({
         message: "Email already exists",
       });
 
-    // 🛠 Other Errors
+      // 🛠 Other Errors
     } else {
       console.error("Signup error:", error);
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
@@ -56,19 +51,14 @@ export const SignUp = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-
-
 // this function handles user sign-in
-
-
 
 export async function SignIn(req: Request, res: Response): Promise<void> {
   const { email, password } = req.body;
-
+  console.log(email, password);
   try {
-
     // const loginUser=SignInSchema.parse(req.body)
-    const user = await Auth.findOne(email ,password );
+    const user = await Auth.findOne({email});
 
     // check if user exists
     if (!user) {
@@ -79,12 +69,11 @@ export async function SignIn(req: Request, res: Response): Promise<void> {
     if (user.password !== password) {
       res.status(401).json({ message: "Incorrect password" });
 
-      
       return;
     }
     // Generate JWT token
     const secret = process.env.JWT_SECRET;
-    console.log({secret})
+    console.log({ secret });
     if (!secret) {
       res
         .status(500)
@@ -92,21 +81,22 @@ export async function SignIn(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const accessToken = JWT.sign({ email: user.email, id:user._id }, secret, {
+    const accessToken = JWT.sign({ email: user.email, id: user._id }, secret, {
       expiresIn: "1h",
     });
 
     // Respond with success message and token
     // console.log(accessToken)
- res
-  .cookie("accessToken", accessToken,{
-     httpOnly: true,
-    secure: false, // true in production
-    sameSite: "lax",
-    maxAge: 24 * 60 * 60 * 1000,
-  }).status(200) .json({ message: "Login successful", ExistUser:user });
-  }
-   catch (error) {
+    res
+      .cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: false, // true in production
+        sameSite: "lax",
+        maxAge: 24 * 60 * 60 * 1000,
+      })
+      .status(200)
+      .json({ message: "Login successful", ExistUser: user });
+  } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: "Something went wrong" });
   }

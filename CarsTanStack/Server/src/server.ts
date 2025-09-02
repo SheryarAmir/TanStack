@@ -28,7 +28,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-connectToDatabase("mongodb://localhost:27017/Carmydatabase");
+connectToDatabase(process.env.MONGO_URL || "mongodb://localhost:27017/Carmydatabase");
 
 app.use("/",carRouter);
 app.use("/" , AuthRouter);
