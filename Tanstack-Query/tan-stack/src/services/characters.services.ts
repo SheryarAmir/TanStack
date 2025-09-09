@@ -7,8 +7,13 @@ class CharacterService {
     return response.data;
   }
 
+  async fetchCharacterById(id: number) {
+    const response = await api.get(`/character/${id}`);
+    return response.data;
+  }
+
 }
 
-// Export a single instance (singleton)
 export const characterService = new CharacterService();
+
 

@@ -7,7 +7,7 @@ import { CharactersResponse } from "../types/character";
 export function useCharacters() {
 
   const setCharacters = useCharacterStore((state) => state.setCharacters);
-  
+
   const { data, isLoading, isError } = useQuery<CharactersResponse>({
     queryKey: ["characters"],
     queryFn: () => characterService.fetchCharacters(),
@@ -15,10 +15,20 @@ export function useCharacters() {
 
   useEffect(() => {
     if (data) {
-      console.log("Fetched results:", data.results);
+    //   console.log("Fetched results:", data.results); 
       setCharacters(data.results);
     }
   }, [data, setCharacters]);
 
   return { data, isLoading, isError };
 }
+
+export function useCharacterById(id: number) {
+  return useQuery({
+    queryKey: ["character", id], // cache per character ID
+    queryFn: () => characterService.fetchCharacterById(id),
+    enabled: !!id, // only run if id exists
+  });
+}
+
+
