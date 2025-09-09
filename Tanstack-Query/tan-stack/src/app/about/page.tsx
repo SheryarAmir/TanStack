@@ -1,32 +1,31 @@
-
 "use client";
-import React, { useState } from 'react'
-import { useCounter } from '../store/useCounter'
+import React, { useState } from "react";
+import { useCounter } from "../../store/Counter.store";
 
 const Page = () => {
-  const { count, increment, decrement, setCount } = useCounter()
-  const [inputValue, setInputValue] = useState('')
+  const { count, increment, decrement, setCount } = useCounter();
+  const [inputValue, setInputValue] = useState("");
 
   const handleSetCount = () => {
-    const newValue = parseInt(inputValue)
+    const newValue = parseInt(inputValue);
     if (!isNaN(newValue)) {
-      setCount(newValue)
-      setInputValue('')
+      setCount(newValue);
+      setInputValue("");
     }
-  }
+  };
 
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">Counter Example</h1>
       <div className="flex items-center gap-4 mb-4">
-        <button 
+        <button
           onClick={decrement}
           className="px-4 py-2 bg-red-500 text-white rounded"
         >
           Decrease
         </button>
         <span className="text-xl font-bold">{count}</span>
-        <button 
+        <button
           onClick={increment}
           className="px-4 py-2 bg-green-500 text-white rounded"
         >
@@ -49,7 +48,7 @@ const Page = () => {
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;

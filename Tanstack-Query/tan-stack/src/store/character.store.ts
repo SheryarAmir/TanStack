@@ -1,6 +1,5 @@
-
 import { create } from "zustand";
-import { Character } from "../../types/character";
+import { Character } from "../types/character";
 
 interface CharacterState {
   characters: Character[];
@@ -11,4 +10,3 @@ export const useCharacterStore = create<CharacterState>((set) => ({
   characters: [],
   setCharacters: (data) => set({ characters: data }),
 }));
-    
