@@ -1,30 +1,39 @@
-
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
 export default function Page() {
-  const router = useRouter();  // use to navigate programmatically
-  const pathname = usePathname();  // current path without query string like "/api"
-  const searchParams = useSearchParams();  // returns URLSearchParams object representing the query string "param=1"
+  const router = useRouter(); // use to navigate programmatically
+  const pathname = usePathname(); // current path without query string like "/api"
+  const searchParams = useSearchParams(); // returns URLSearchParams object representing the query string "param=1"
 
-  const setParam = (key: string, value: string) => { // function to set or update a query parameter
-    const params = new URLSearchParams(searchParams.toString()); // create a new URLSearchParams object from current search params 
+  const setParam = (key: string, value: string) => {
+    // function to set or update a query parameter
+    const params = new URLSearchParams(searchParams.toString()); // create a new URLSearchParams object from current search params
     params.set(key, value);
     router.push(`/api?${params.toString()}`);
   };
 
+  
+  function changeParams(blogId:number , key: string, value: string) {
+    const Sparams = new URLSearchParams(searchParams.toString());
+    Sparams.set(key, value);
+
+    router.push(`/blog/${blogId}?${Sparams.toString()}`);
+  }
   return (
     <div>
-      <button onClick={() => setParam("param","1")} className="bg-blue-500 text-white p-2 rounded">
-        click me </button>
+      <button
+        onClick={() => setParam("param", "1")}
+        className="bg-blue-500 text-white p-2 rounded"
+      >
+        click me{" "}
+      </button>
+
+      <button onClick={() => changeParams(4,"age", "23")}>get the AGE</button>
     </div>
   );
 }
-
-
-
-
 
 // "use client";
 
@@ -47,8 +56,6 @@ export default function Page() {
 //   );
 // }
 
-
-
 // import Link from "next/link";
 
 // export default function Page() {
@@ -60,8 +67,6 @@ export default function Page() {
 //     </div>
 //   );
 // }
-
-
 
 // "use client";
 

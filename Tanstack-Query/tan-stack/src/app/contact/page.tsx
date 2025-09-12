@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -13,106 +13,188 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
+import { formSchema } from "@/schema/contact.schema";
+import { useSubmitForm } from "@/hook/character.hook";
 
-import { Input } from "@/components/ui/input"
-
-
-const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
-})
 
 export default function ProfileForm() {
  
+
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       username: "",
+      email: "",
+      message: "",
+      country: "",
+      gender: undefined,
+      terms: false,
     },
-    
-  })
+  });
 
-  
+  const { mutate } = useSubmitForm();
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Form values:", values)
+    // console.log("Form values:", values);
+    mutate(values);
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
-  )
+    <div>
+     
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 max-w-md mx-auto p-4 border rounded-lg"
+        >
+          {/* Username */}
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Username</FormLabel>
+                <FormControl>
+                  <Input placeholder="shadcn" {...field} />
+                </FormControl>
+                <FormDescription>
+                  This will be your public display name.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Email */}
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="you@example.com"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Message */}
+          <FormField
+            control={form.control}
+            name="message"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Message</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Type your message here..."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Country Select */}
+          <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Country</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a country" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="pakistan">Pakistan</SelectItem>
+                    <SelectItem value="india">India</SelectItem>
+                    <SelectItem value="usa">USA</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Gender Radio */}
+          <FormField
+            control={form.control}
+            name="gender"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Gender</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    value={field.value}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="male" id="male" />
+                      <FormLabel htmlFor="male">Male</FormLabel>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="female" id="female" />
+                      <FormLabel htmlFor="female">Female</FormLabel>
+                    </div>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Terms Checkbox */}
+          <FormField
+            control={form.control}
+            name="terms"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>I accept the terms and conditions</FormLabel>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Submit Button */}
+          <Button type="submit" className="w-full">
+            Submit
+          </Button>
+        </form>
+      </Form>
+    </div>
+  );
 }
-
-
-// "use client"
-// import React from 'react'
-// import {useForm } from 'react-hook-form'
-
-// const page = () => {
-
-//     const {register, handleSubmit, formState: { errors }, watch} = useForm(
-//         {
-//             defaultValues: {
-//                 name: 'sheryasrao',
-//                 email: 'sheryasrao@example.com',
-//                 message: 'Hello, I am interested in your services.'
-//             }
-//         }
-//     );
-//   return (
-//     <div>
-//       <form onSubmit={handleSubmit((data) => console.log(data))}>
-       
-// <input 
-//   {...register("name", {
-//     required: true,
-//     minLength: {
-//       value: 10,
-//       message: "Name must be at least 10 characters"
-//     },
-//     maxLength: {
-//       value: 13,
-//       message: "Name cannot exceed 13 characters"
-//     }
-//   })} 
-//   type="text" 
-//   placeholder='Name' 
-// />
-// {errors.name && <span>{errors.name.message}</span>}
-
-
-//         <br />
-//         <input {...register("email", {required:true} )} type="email" placeholder='Email' />
-//         {errors.email && <span>This field is required</span>}
-//         <br />
-//         <textarea {...register("message", {required:true})} placeholder='Message'></textarea>
-//         {errors.message && <span>This field is required</span>} 
-//         <br />
-//         <button type='submit'>Submit</button>
-//       </form>
-//     </div>
-//   )
-// }
-
-// export default page

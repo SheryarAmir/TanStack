@@ -1,8 +1,9 @@
 import { useCharacterStore } from "../store/character.store";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { characterService } from "../services/characters.services";
 import { CharactersResponse } from "../types/character";
+import { FormSchema } from "@/schema/contact.schema";
 
 export function useCharacters() {
 
@@ -32,3 +33,10 @@ export function useCharacterById(id: number) {
 }
 
 
+
+export function useSubmitForm() {
+  return useMutation({
+    mutationKey: ["submitForm"],
+    mutationFn: (data: FormSchema) => characterService.submitForm(data),
+  })
+}

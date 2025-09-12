@@ -4,13 +4,17 @@ import { useParams, useSearchParams,useRouter } from "next/navigation";
 import { useCharacters } from "../../hook/character.hook";
 import { useCharacterStore } from "../../store/character.store";
 
+
 export default function Page() {
     const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
+
+        
   const apiId = params?.apiId;
   const param = searchParams.get("param") || "";
 
+ 
   function viewById(id: number) {
     router.push(`/api/${id}`);
   }
@@ -24,6 +28,7 @@ export default function Page() {
   if (isError) return <div>Error occurred while fetching data.</div>;
 
 console.log("Characters from store:", characters);
+
 
   return (
     <div className="p-6">
