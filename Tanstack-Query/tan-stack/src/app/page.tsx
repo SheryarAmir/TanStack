@@ -11,12 +11,13 @@ export default function Page() {
   const setParam = (key: string, value: string) => { // function to set or update a query parameter
     const params = new URLSearchParams(searchParams.toString()); // create a new URLSearchParams object from current search params 
     params.set(key, value);
-    router.push(`${pathname}?${params.toString()}`);
+    router.push(`/api?${params.toString()}`);
   };
 
   return (
     <div>
-      <button onClick={() => setParam("param","1")}>Set param=1</button>
+      <button onClick={() => setParam("param","1")} className="bg-blue-500 text-white p-2 rounded">
+        click me </button>
     </div>
   );
 }
