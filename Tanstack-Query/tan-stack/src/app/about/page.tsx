@@ -1,54 +1,40 @@
-"use client";
-import React, { useState } from "react";
-import { useCounter } from "../../store/Counter.store";
+  "use client"
 
-const Page = () => {
-  const { count, increment, decrement, setCount } = useCounter();
-  const [inputValue, setInputValue] = useState("");
+  import { useCouterStore } from '@/store/Counter.store'
+  import React, { useEffect } from 'react'
 
-  const handleSetCount = () => {
-    const newValue = parseInt(inputValue);
-    if (!isNaN(newValue)) {
-      setCount(newValue);
-      setInputValue("");
-    }
-  };
+  const logcount=()=>{  
+    useCouterStore.setState({count :1})
+    
+      //  Can't do this here because hooks only run inside React components:
+  // const count = useCouterStore((state) => state.count)
 
+  //  But Zustand also gives you access to the store object directly:
+  // Get current state: useCouterStore.getState()
+  // Set new state: useCouterStore.setState()
+
+    
+  }
+
+
+const page = () => {
+  const  count=useCouterStore((state)=>state.count)
+  const incrementAsync=useCouterStore((state)=>state.incrementAsync)
+  const decrement=useCouterStore((state)=>state.decrement)
+
+
+  useEffect(()=>{
+logcount()
+  },[])
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Counter Example</h1>
-      <div className="flex items-center gap-4 mb-4">
-        <button
-          onClick={decrement}
-          className="px-4 py-2 bg-red-500 text-white rounded"
-        >
-          Decrease
-        </button>
-        <span className="text-xl font-bold">{count}</span>
-        <button
-          onClick={increment}
-          className="px-4 py-2 bg-green-500 text-white rounded"
-        >
-          Increase
-        </button>
-      </div>
-      <div className="flex items-center gap-4">
-        <input
-          type="number"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          className="border p-2 rounded"
-          placeholder="Enter new count"
-        />
-        <button
-          onClick={handleSetCount}
-          className="px-4 py-2 bg-blue-500 text-white rounded"
-        >
-          Set Count
-        </button>
-      </div>
-    </div>
-  );
-};
+    <div>
+   <p>{count}</p>   
+       <button onClick={incrementAsync}>increment</button>
+       <button onClick={decrement}>decrement</button>
+     </div>
+  )
+   
 
-export default Page;
+}
+
+export default page

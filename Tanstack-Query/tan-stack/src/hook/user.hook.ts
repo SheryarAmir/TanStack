@@ -6,7 +6,7 @@ import { CharacterArray  } from "@/types/user.types";
 export function getUsers() { 
   const { data, isLoading, isError } = useQuery<CharacterArray>({
     queryKey: ["users"], 
-    queryFn: () => userServices.fetchUsers() 
+    queryFn: userServices.fetchUsers 
   })
 
   useEffect(() => {
