@@ -7,15 +7,7 @@ export default function Page() {
   const pathname = usePathname(); // current path without query string like "/api"
   const searchParams = useSearchParams(); // returns URLSearchParams object representing the query string "param=1"
 
-  const setParam = (key: string, value: string) => {
-    // function to set or update a query parameter
-    const params = new URLSearchParams(searchParams.toString()); // create a new URLSearchParams object from current search params
-    params.set(key, value);
-    router.push(`/api?${params.toString()}`);
-  };
-
-  
-  function changeParams(blogId:number , key: string, value: string) {
+  function changeParams(blogId: number, key: string, value: string) {
     const Sparams = new URLSearchParams(searchParams.toString());
     Sparams.set(key, value);
 
@@ -24,13 +16,11 @@ export default function Page() {
   return (
     <div>
       <button
-        onClick={() => setParam("param", "1")}
         className="bg-blue-500 text-white p-2 rounded"
+        onClick={() => changeParams(4, "age", "23")}
       >
-        click me{" "}
+        get the AGE
       </button>
-
-      <button onClick={() => changeParams(4,"age", "23")}>get the AGE</button>
     </div>
   );
 }
