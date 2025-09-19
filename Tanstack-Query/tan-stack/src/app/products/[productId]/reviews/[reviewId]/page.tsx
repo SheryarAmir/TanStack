@@ -4,6 +4,10 @@ import React from "react";
 import { useParams, useRouter } from "next/navigation";
 
 const ReviewId = () => {
+  const rendomNumbers = (count: any) => {
+    return Math.floor(Math.random() * count);
+  };
+
   const params = useParams();
   const router = useRouter();
   const productId = params?.productId;
@@ -20,6 +24,14 @@ const ReviewId = () => {
     pros: ["Camera quality", "Battery life", "Performance"],
     cons: ["Premium price", "Limited customization"],
   };
+
+  const random = rendomNumbers(2);
+
+  if (random === 1) {
+    throw new Error(
+      "this error message come from the error file inside of the app folder"
+    ); //the error in deveploment mode and the error in production mode is different . you can see that if you do npm run build .
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
