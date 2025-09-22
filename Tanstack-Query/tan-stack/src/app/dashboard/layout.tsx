@@ -23,13 +23,17 @@ const Layout = ({
   notifications,
   users,
   revenue,
+  login,
 }: {
   children: React.ReactNode;
   notifications: React.ReactNode;
   users: React.ReactNode;
   revenue: React.ReactNode;
+  login: React.ReactNode;
 }) => {
-  return (
+  const isLogin = true;
+
+  return isLogin ? (
     <div className="min-h-screen bg-gray-50">
       {/* Main Content */}
       <div className="p-6">{children}</div>
@@ -53,6 +57,8 @@ const Layout = ({
         </div>
       </div>
     </div>
+  ) : (
+    login
   );
 };
 
