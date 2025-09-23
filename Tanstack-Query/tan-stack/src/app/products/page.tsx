@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
+// import { greet } from "@naveedalirehmani/greeter";   // using naveed ustad package .
 
 const Product = () => {
   const router = useRouter();
@@ -9,6 +10,8 @@ const Product = () => {
   function handlerProductId(id: number) {
     router.push(`/products/${id}`);
   }
+
+  // alert(greet("sheryar"));
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
