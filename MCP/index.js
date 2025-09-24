@@ -1,45 +1,68 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+/**
+ * Minimal RAG (Retrieval-Augmented Generation) Example with LangChain
+ * ------------------------------------------------------------------
+ * What is RAG?
+ * RAG = Retrieval-Augmented Generation.
+ * It means: before asking the LLM a question, we "retrieve" (fetch) some documents
+ * and put them into the model's context. The LLM then answers using that knowledge.
+ *
+ * In this example, we don’t use a database. Instead, we "stuff" a static document
+ * directly into the model’s context using `createStuffDocumentsChain`.
+ */
 
-import { z } from "zod";
+import "dotenv/config";
+import { ChatOpenAI } from "@langchain/openai";
+import { Document } from "langchain/document";
+//In LangChain, a Document is just a small container for text (and optional metadata).We’ll put our custom knowledge ("KMT stands for Kohminds Technologies") into a Document.
+import { ChatPromptTemplate } from "@langchain/core/prompts";
+//which lets us create a structured prompt with placeholders like {context} and {input}. Instead of manually writing strings, we can define templates that LangChain will fill in.
+import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
+//“Stuffing” means: take all your documents, shove them into the prompt context, and send it to the model.This is the simplest form of RAG (Retrieval-Augmented Generation).
 
-const server = new McpServer({
-  name: "Weather Data Featcher",
-  version: "1.0.0",
+// 1. Setup LLM
+const llm = new ChatOpenAI({
+  model: "gpt-4o-mini",
 });
 
-async function getWeatherByCity(city = "") {
-  if (city.toLocaleLowerCase() == "gilgit") {
-    return { tem: "30c", forcast: "change to heave raining" };
-  }
+// 2. Our knowledge source
+const docs = [
+  new Document({
+    pageContent: "KMT stands for Kohminds Technologies",
+  }),
+];
 
-  if (city.toLocaleLowerCase() == "hunza") {
-    return { tem: "20c", forcast: "change to heave winds" };
-  }
-  if (city.toLocaleLowerCase() == "nalter") {
-    return { tem: "10c", forcast: "change to heave cloudy" };
-  }
+// 3. Prompt template (strict use of context)
+const prompt = ChatPromptTemplate.fromTemplate(`
+You are a helpful assistant. ONLY use the context below to answer.
 
-  return { tem: null, error: "unable to get data" };
-}
+Context:{context}
 
-server.tool(
-  "getWeatherDataByCityName",
-  {
-    city: z.string(),
-  },
-  async ({ city }) => {
-    return {
-      content: [
-        { type: "text", text: JSON.stringify(await getWeatherByCity(city)) },
-      ],
-    };
-  }
-);
+Question: {input}
+`);
 
-async function init() {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-}
+// 4. Create chain
+const chain = await createStuffDocumentsChain({
+  llm,
+  prompt,
+});
 
-init();
+// 5. Question
+const question = "What does KMT stand for?";
+
+console.log("\n=========== ALERT =======");
+console.log(" Question:", question);
+
+// 6. Pass BOTH question and documents correctly
+const answer = await chain.invoke({
+  input: question,
+  context: docs,
+
+  //input → user’s question goes into {input} in the prompt.
+
+  // documents → docs are automatically stuffed into {context}.
+
+  //  The chain sends everything to the LLM, gets an answer back.
+});
+
+// 7. Print answer
+console.log("Answer:", answer);

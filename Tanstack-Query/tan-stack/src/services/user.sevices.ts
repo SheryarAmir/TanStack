@@ -2,7 +2,7 @@ import api from "./api";
 import { CharacterArray, Character } from "@/types/user.types";
 import { endpoints } from "@/constants/endpoints";
 
-class UserServices {
+class TodoServices {
   async fetchUsers(): Promise<CharacterArray> {
     try {
       const url = endpoints.USER.FETCH_CHARACTERS;
@@ -27,4 +27,4 @@ class UserServices {
   }
 }
 
-export const userServices = new UserServices();
+export const todoServices = new TodoServices();
