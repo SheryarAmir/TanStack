@@ -4,21 +4,24 @@ import Todo from "../../models/todo.modal";
 // addtodo
 export const addtodo = async (req: Request, res: Response) => {
   try {
-    console.log(req.body);
-    const { title } = req.body;
+    const { title, description, completed } = req.body;
 
-    console.log(" Incoming title:", title);
+    console.log("Incoming todo:", { title, description, completed });
 
     if (!title) {
       res.status(400).json({ error: "Title is required" });
     }
 
-    const todo = await Todo.create({ title });
+    const todo = await Todo.create({
+      title,
+      description: description,
+      completed: false,
+    });
 
     res.status(201).json(todo);
   } catch (err: any) {
-    console.error(" Error while saving todo:", err.message);
-    res.status(500).json({ error: "Failed to add todo fro the backendsss" });
+    console.error("Error while saving todo:", err.message);
+    res.status(500).json({ error: "Failed to add todo" });
   }
 };
 
@@ -52,7 +55,7 @@ export const getTodoById = async (req: Request, res: Response) => {
 
 //  Delete todo
 export const deleteTodo = async (req: Request, res: Response) => {
-  console.log("deltee");
+  console.log("you todo is delete sussessfully");
 
   try {
     const { id } = req.params;
@@ -65,11 +68,11 @@ export const deleteTodo = async (req: Request, res: Response) => {
 };
 
 // Mark as complete
+
 export const completeTodo = async (req: Request, res: Response) => {
-  console.log("sherayrw");
   try {
     const { id } = req.params;
-    console.log(`Completing todo with id: ${id}`); // ✅ proper logging
+    console.log(`Completing todo with id: ${id}`);
 
     const updatedTodo = await Todo.findByIdAndUpdate(
       id,
@@ -81,10 +84,10 @@ export const completeTodo = async (req: Request, res: Response) => {
       res.status(404).json({ error: "Todo not found" });
     }
 
-    console.log("Updated todo:", updatedTodo); // ✅ confirm update
+    console.log("Updated todo:", updatedTodo);
     res.status(200).json(updatedTodo);
-  } catch (err) {
-    console.error("Error completing todo:", err); // ✅ proper error logging
+  } catch (err: any) {
+    console.error("Error completing todo:", err.message || err);
     res.status(500).json({ error: "Failed to complete todo" });
   }
 };
