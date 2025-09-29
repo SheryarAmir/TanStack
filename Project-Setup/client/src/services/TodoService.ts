@@ -1,6 +1,6 @@
 import api from "./api";
 import { endpoints } from "@/constants/endpoints";
-
+import { CreateTodoDTO } from "@/types/todo.type";
 class TodoServices {
   async fetchTodo() {
     try {
@@ -13,7 +13,7 @@ class TodoServices {
     }
   }
 
-  async createTodo(data: any) {
+  async createTodo(data: CreateTodoDTO) {
     if (!data) throw new Error("Todo data not provided");
     try {
       const url = endpoints.TODO.POST_TODO;
@@ -50,6 +50,7 @@ class TodoServices {
   async completeTodo(id: string) {
     if (!id) throw new Error("Todo ID not provided");
     try {
+      console.log(`this  is id from services ${id}`);
       const url = endpoints.TODO.COMPLETE_TODO(id);
       const response = await api.patch(url);
       console.log(` complete id${id}`);

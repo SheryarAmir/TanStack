@@ -1,13 +1,13 @@
 "use client";
 
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { todoServices } from "@/services/TodoService";
 import { useEffect } from "react";
+import { CreateTodoDTO } from "@/types/todo.type";
 
 export function useAddTodo() {
   const { mutate, data, isError, isSuccess } = useMutation({
-    mutationFn: (todoData: { title: string }) =>
-      todoServices.createTodo(todoData),
+    mutationFn: (todoData: CreateTodoDTO) => todoServices.createTodo(todoData),
     onSuccess: () => {
       console.log(`todo add successfully`);
     },
@@ -52,21 +52,35 @@ export function useGetTodoById(todoId: string) {
 
   return { data, isLoading, isError };
 }
-
 export function useDeleteTodo() {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (id: string) => todoServices.deleteTodo(id),
     onSuccess: () => {
-      console.log(`todo delete successfully`);
+      alert(`Todo deleted successfully`);
+
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 }
 
 export function useCompleteTodo() {
+  const queryClient = useQueryClient();
+  console.log("this is mark as complete");
   return useMutation({
     mutationFn: (id: string) => todoServices.completeTodo(id),
     onSuccess: () => {
-      console.log(`marked as complete`);
+      alert(`marked as complete`);
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 }
+
+// queryClient.invalidateQueries(["todos"]) tells React Query:
+
+// “Hey, this query data is stale. Go fetch it again.”
+
+// So after deleting, your page automatically refetches the updated todo list.
+
+// No need for manual useEffect or setState to update the UI.

@@ -5,8 +5,8 @@ import Link from "next/link";
 
 export default function LandingHero() {
   return (
-    <section className="bg-background">
-      <div className="mx-auto flex max-w-5xl flex-col gap-8 px-4 py-16 text-center sm:py-20">
+    <section className="bg-background  container mx-auto h-full">
+      <div className="flex-col gap-8 px-4 py-16 text-center sm:py-20">
         <div className="flex flex-col gap-4">
           <span className="mx-auto rounded-full bg-secondary px-4 py-1 text-xs font-medium text-secondary-foreground">
             Plan better todos

@@ -1,24 +1,24 @@
 "use client";
 import React from "react";
-
 import { useRouter } from "next/navigation";
 import { useGetTodos, useDeleteTodo, useCompleteTodo } from "@/hooks/todo.hook";
 
 const TodosPage = () => {
+  const router = useRouter();
   const deleteTodo = useDeleteTodo();
   const completeTodo = useCompleteTodo();
   const { data, isLoading, isError } = useGetTodos();
-  const router = useRouter();
 
-  function handlerdelete(id: string) {
-    console.log(id);
+  const handlerDelete = (id: string) => {
     deleteTodo.mutate(id);
-  }
-  function handlercomplete(id: string) {
-    console.log(id);
+  };
+
+  const handlerComplete = (id: string) => {
     completeTodo.mutate(id);
-  }
+  };
+
   if (isLoading) return <p className="text-center mt-6">Loading todos...</p>;
+
   if (isError)
     return (
       <p className="text-center mt-6 text-red-500">Failed to load todos</p>
@@ -38,7 +38,14 @@ const TodosPage = () => {
                 key={todo._id}
                 className="flex justify-between items-center border border-gray-200 p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition"
               >
-                <span className="font-medium text-gray-700">{todo.title}</span>
+                {/* Title with strike-through if completed */}
+                <span
+                  className={`font-medium text-gray-700 ${
+                    todo.completed ? "line-through text-gray-400" : ""
+                  }`}
+                >
+                  {todo.title}
+                </span>
 
                 <div className="flex gap-2">
                   <button
@@ -48,16 +55,21 @@ const TodosPage = () => {
                     View
                   </button>
                   <button
-                    onClick={() => handlerdelete(todo._id)}
+                    onClick={() => handlerDelete(todo._id)}
                     className="px-4 py-2 text-sm font-medium rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
                   >
                     Delete
                   </button>
                   <button
-                    onClick={() => handlercomplete(todo._id)}
-                    className="px-4 py-2 text-sm font-medium rounded-lg bg-green-500 text-white hover:bg-green-600 transition"
+                    onClick={() => handlerComplete(todo._id)}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg ${
+                      todo.completed
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-green-500 hover:bg-green-600"
+                    } text-white transition`}
+                    disabled={todo.completed}
                   >
-                    Complete
+                    {todo.completed ? "Done" : "Complete"}
                   </button>
                 </div>
               </li>

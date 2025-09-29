@@ -23,6 +23,9 @@ const TodoDetailPage = () => {
           <strong>Title:</strong> {todo.title}
         </p>
         <p>
+          <strong>Description</strong> {todo.description}
+        </p>
+        <p>
           <strong>Created At:</strong>{" "}
           {new Date(todo.createdAt).toLocaleString()}
         </p>
