@@ -31,11 +31,12 @@ app.use(express.urlencoded({ extended: true }));
 
 connectToDatabase(process.env.MONGO_URL);
 
+app.use("/health", (req, res) => {
+  res.status(200).json({ message: "server is healthy ." });
+});
+
 app.use("/", carRouter);
 app.use("/", AuthRouter);
-app.use("health", (request, response) => {
-  response.json({ status: "server is healthy" });
-});
 
 applyBodyParsers(app);
 
