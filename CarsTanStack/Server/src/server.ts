@@ -6,33 +6,37 @@ import AuthRouter from "./Routes/AuthRouter";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-
-declare module "express-serve-static-core"{
-  interface Request{
+declare module "express-serve-static-core" {
+  interface Request {
     user: {
-      email : string;
+      email: string;
       id: string;
-    }
+    };
   }
 }
 
 const app: Express = express();
 
 //  Correct CORS configuration for cookies
-app.use(cors({
-  origin: "http://localhost:3000", 
-  credentials: true,              
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-connectToDatabase(process.env.MONGO_URL || "mongodb://localhost:27017/Carmydatabase");
+connectToDatabase(process.env.MONGO_URL);
 
-app.use("/",carRouter);
-app.use("/" , AuthRouter);
+app.use("/", carRouter);
+app.use("/", AuthRouter);
+app.use("health", (request, response) => {
+  response.json({ status: "server is healthy" });
+});
 
 applyBodyParsers(app);
 
-export default app; 
+export default app;
