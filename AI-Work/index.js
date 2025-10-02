@@ -1,68 +1,105 @@
-/**
- * Minimal RAG (Retrieval-Augmented Generation) Example with LangChain
- * ------------------------------------------------------------------
- * What is RAG?
- * RAG = Retrieval-Augmented Generation.
- * It means: before asking the LLM a question, we "retrieve" (fetch) some documents
- * and put them into the model's context. The LLM then answers using that knowledge.
- *
- * In this example, we don’t use a database. Instead, we "stuff" a static document
- * directly into the model’s context using `createStuffDocumentsChain`.
- */
-
 import "dotenv/config";
-import { ChatOpenAI } from "@langchain/openai";
-import { Document } from "langchain/document";
-//In LangChain, a Document is just a small container for text (and optional metadata).We’ll put our custom knowledge ("KMT stands for Kohminds Technologies") into a Document.
-import { ChatPromptTemplate } from "@langchain/core/prompts";
-//which lets us create a structured prompt with placeholders like {context} and {input}. Instead of manually writing strings, we can define templates that LangChain will fill in.
-import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
-//“Stuffing” means: take all your documents, shove them into the prompt context, and send it to the model.This is the simplest form of RAG (Retrieval-Augmented Generation).
+import { openai } from "@ai-sdk/openai";
+import { generateText, streamText } from "ai";
 
-// 1. Setup LLM
-const llm = new ChatOpenAI({
-  model: "gpt-4o-mini",
-});
+// using vercal AI SDK , use the generate text function .
+// 01 generateText function
+// async function output() {
+//   const { text } = await generateText({
+//     model: openai("gpt-4o-mini"),
+//     prompt: "write a simple sentence ony ?",
+//   });
 
-// 2. Our knowledge source
-const docs = [
-  new Document({
-    pageContent: "KMT stands for Kohminds Technologies",
-  }),
-];
+//   console.log("AI Response:\n", text);
+// }
 
-// 3. Prompt template (strict use of context)
-const prompt = ChatPromptTemplate.fromTemplate(`
-You are a helpful assistant. ONLY use the context below to answer.
+// output();
 
-Context:{context}
+// const Textoutput = async () => {
+//   const { text } = await generateText({
+//     model: openai("gpt-4o-mini", {
+//       apiKey: process.env.OPENAI_API_KEY,
+//     }),
+//     prompt: "What is the full form of DVD?",
+//   });
 
-Question: {input}
-`);
+//   console.log("Answer:", text);
+// };
 
-// 4. Create chain
-const chain = await createStuffDocumentsChain({
-  llm,
-  prompt,
-});
+// Textoutput();
 
-// 5. Question
-const question = "What does KMT stand for?";
+// const systemPromptExample = async () => {
+//   const result = await generateText({
+//     model: openai("gpt-4o"),
+//     system: `
+// You are a helpful AI. Always reply in valid JSON format.
+// The JSON must strictly follow this schema:
 
-console.log("\n=========== ALERT =======");
-console.log(" Question:", question);
+// {
+//   "answer": "string",
+//   "explanation": "string"
+// }
+//     `,
+//     prompt: "What is the full form of DVD?",
+//   });
 
-// 6. Pass BOTH question and documents correctly
-const answer = await chain.invoke({
-  input: question,
-  context: docs,
+//   console.log("Raw Output:\n", result.text);
 
-  //input → user’s question goes into {input} in the prompt.
+//   // You can also parse it if it's strict JSON
+//   try {
+//     const parsed = JSON.parse(result.text);
+//     console.log("\nParsed Output:", parsed);
+//   } catch (e) {
+//     console.error(" JSON parsing failed", e.message);
+//   }
+// };
 
-  // documents → docs are automatically stuffed into {context}.
+// systemPromptExample();
 
-  //  The chain sends everything to the LLM, gets an answer back.
-});
+// const coreMessage = async () => {
+//   const result = await generateText({
+//     model: openai("gpt-4o"),
+//     messages: [
+//       // System = rules / behavior
+//       coreMessage(
+//         "system",
+//         "You are a financial advisor. Always answer with clear bullet points."
+//       ),
 
-// 7. Print answer
-console.log("Answer:", answer);
+//       // User = first request
+//       coreMessage("user", "Can you suggest some safe investment options?"),
+
+//       // Assistant = remembering what it answered before
+//       coreMessage(
+//         "assistant",
+//         "Sure! Some safe options are government bonds, index funds, and high-yield savings accounts."
+//       ),
+
+//       // Follow-up user message
+//       coreMessage("user", "Great, now compare index funds vs bonds."),
+//     ],
+//   });
+
+//   console.log("AI Response:\n", result.text);
+// };
+
+// coreMessage();
+
+// 02 streaming text
+
+const main = async () => {
+  const result = await streamText({
+    model: openai("gpt-4o"),
+    prompt: "What is the color of the sun?",
+  });
+
+  // Print chunks live in the terminal
+  for await (const chunk of result.textStream) {
+    process.stdout.write(chunk);
+  }
+};
+
+main();
+
+// 03 system Prompt
+// 04 hot swapping modal
