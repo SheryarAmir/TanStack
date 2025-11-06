@@ -1,59 +1,55 @@
+
 import "dotenv/config";
-import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
+import { ChatOpenAI } from "@langchain/openai";
+import { Document } from "langchain/document";
+//In LangChain, a Document is just a small container for text (and optional metadata).We’ll put our custom knowledge ("KMT stands for Kohminds Technologies") into a Document.
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
-import { MemoryVectorStore } from "@langchain/community/vectorstores/memory";
+//which lets us create a structured prompt with placeholders like {context} and {input}. Instead of manually writing strings, we can define templates that LangChain will fill in.
 import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
-import { createRetrievalChain } from "langchain/chains/retrieval";
+//“Stuffing” means: take all your documents, shove them into the prompt context, and send it to the model.This is the simplest form of RAG (Retrieval-Augmented Generation).
 
-// 1 Load your local PDF (place "myfile.pdf" in the same folder)
-const loader = new PDFLoader("./myfile.pdf");
-const pdfDocs = await loader.load();
-console.log(` Loaded ${pdfDocs.length} pages from PDF`);
-
-// 2 Embed documents using OpenAI embeddings
-const embeddings = new OpenAIEmbeddings({
-  model: "text-embedding-3-small",
-});
-const vectorStore = await MemoryVectorStore.fromDocuments(pdfDocs, embeddings);
-console.log(" PDF embedded into in-memory vector store");
-
-// 3 Create a retriever (fetches the top-k relevant chunks)
-const retriever = vectorStore.asRetriever({
-  k: 3, // number of chunks to retrieve
-});
-
-// 4 Define a context-aware prompt
-const prompt = ChatPromptTemplate.fromTemplate(`
-You are a helpful assistant. Use ONLY the provided context to answer.
-If the answer isn't in the context, reply: "The document does not mention that."
-
-Context:
-{context}
-
-Question:
-{input}
-`);
-
-// 5️⃣ Initialize the LLM and combine the chains
+// 1. Setup LLM
 const llm = new ChatOpenAI({
   model: "gpt-4o-mini",
 });
-const combineChain = await createStuffDocumentsChain({
+
+// 2. Our knowledge source
+const docs = [
+  new Document({
+    pageContent: "KMT stands for Kohminds Technologies",
+  }),
+];
+
+// 3. Prompt template (strict use of context) nothing else
+const prompt = ChatPromptTemplate.fromTemplate(`  
+You are a helpful assistant. ONLY use the context below to answer.
+Context:{context}
+Question: {input}
+`);
+
+// 4. Create chain and sent to the llm
+const chain = await createStuffDocumentsChain({
   llm,
   prompt,
 });
-const chain = await createRetrievalChain({
-  retriever,
-  combineDocumentsChain: combineChain,
+
+// 5. Question
+const question = "What does KMT stand for?";
+
+console.log("\n=========== ALERT =======");
+console.log(" Question:", question);
+
+// 6. Pass BOTH question and documents correctly
+const answer = await chain.invoke({
+  input: question,
+  context: docs,
+
+  //input → user’s question goes into {input} in the prompt.
+
+  // documents → docs are automatically stuffed into {context}.
+
+  //  The chain sends everything to the LLM, gets an answer back.
 });
 
-// 6️⃣ Ask a question about your PDF
-const question = "What is the main topic of this document?";
-console.log("\n=========== QUESTION =======");
-console.log(">", question);
-
-const answer = await chain.invoke({ input: question });
-
-console.log("\n=========== ANSWER =======");
-console.log(answer);
+// 7. Print answer
+console.log("Answer:", answer);
