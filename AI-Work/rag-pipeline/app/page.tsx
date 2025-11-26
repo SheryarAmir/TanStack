@@ -1,51 +1,110 @@
-// app/chat/page.tsx
-"use client";
-import { useState } from "react";
+"use client"
 
-export default function ChatPage() {
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<{ role: string; text: string }[]>(
-    []
-  );
+import { useState } from 'react';
 
-  const sendMessage = async () => {
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      body: JSON.stringify({ message: input }),
-    });
-    const data = await res.json();
-    setMessages([
-      ...messages,
-      { role: "user", text: input },
-      { role: "bot", text: data.reply },
-    ]);
-    setInput("");
+export default function RAGChatInterface() {
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer] = useState('');
+  const [sources, setSources] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!question.trim()) return;
+
+    setLoading(true);
+    setAnswer('');
+    setSources([]);
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setAnswer(data.answer);
+        setSources(data.sources || []);
+      } else {
+        setAnswer(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      setAnswer('Failed to connect to server.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit();
+    }
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <div className="space-y-4 mb-4">
-        {messages.map((m, i) => (
-          <div
-            key={i}
-            className={m.role === "user" ? "text-blue-600" : "text-green-700"}
-          >
-            <b>{m.role === "user" ? "You:" : "Bot:"}</b> {m.text}
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-4xl font-bold text-center text-indigo-900 mb-8">
+          📄 RAG PDF Assistant
+        </h1>
+
+        <div className="mb-6">
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Ask a question about your PDF..."
+              className="flex-1 px-4 py-3 rounded-lg border-2 border-indigo-300 focus:border-indigo-500 focus:outline-none"
+              disabled={loading}
+            />
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed font-medium"
+            >
+              {loading ? '...' : 'Ask'}
+            </button>
           </div>
-        ))}
+        </div>
+
+        {answer && (
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-3">
+              💡 Answer
+            </h2>
+            <p className="text-gray-700 leading-relaxed">{answer}</p>
+          </div>
+        )}
+
+        {sources.length > 0 && (
+          <div className="bg-white rounded-lg shadow-lg p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-3">
+              📚 Sources (Retrieved Chunks)
+            </h2>
+            <div className="space-y-3">
+              {sources.map((source, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 bg-gray-50 rounded-lg border border-gray-200"
+                >
+                  <p className="text-sm text-gray-600">{source.content}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {!answer && !loading && (
+          <div className="text-center text-gray-500 mt-12">
+            Ask a question to get started!
+          </div>
+        )}
       </div>
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        className="border p-2 w-full rounded"
-        placeholder="Ask something about Formula 1..."
-      />
-      <button
-        onClick={sendMessage}
-        className="mt-2 bg-blue-600 text-white px-4 py-2 rounded"
-      >
-        Send
-      </button>
     </div>
   );
 }
