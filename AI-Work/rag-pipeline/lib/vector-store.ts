@@ -22,7 +22,7 @@ export async function storeEmbeddings(docs: any[]) {
     namespace: 'pdf-knowledge',
   });
 
-  console.log('✅ Embeddings stored successfully!');
+  // console.log('✅ Embeddings stored successfully!');
 }
 
 export async function searchSimilarChunks(query: string, k = 4) {
